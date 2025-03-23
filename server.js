@@ -21,6 +21,7 @@ io.on('connection', (socket)=>{
     //handle users when they will join the chat
     socket.on('join', (username)=>{
         users.add(username)
+        socket.username = username
 
         //emit a broadcast to all clients that a user joined
         io.emit(`userJoined`, username)
@@ -36,6 +37,20 @@ io.on('connection', (socket)=>{
     })
 
     //handle when a user disconnects
+    socket.on('disconnect', ()=>{
+        console.log('A user has left')
+
+        users.forEach((user)=> {
+            if(socket.username === user){
+                users.delete(user)
+
+                io.emit('userLeft', user)
+
+                //send updated user list
+                io.emit('userList', Array.from(users))
+            }
+        })
+    })
 })
 
 server.listen(3000, ()=>{

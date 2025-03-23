@@ -36,8 +36,17 @@
         //emit an event from client side
         socket.emit('join', username)
 
+        //listen for broadcasted message
+        socket.on('chatMessage', (message)=>{
+            addMessage(`${message.username}: ${message.text}`)
+        })
+
         socket.on("userJoined", (user)=>{
             addMessage(`${user} has joined the chat`)
+        })
+
+        socket.on('userLeft', (user)=>{
+            addMessage(`${user} has left the chat`)
         })
 
         socket.on('userList', (users)=>{
